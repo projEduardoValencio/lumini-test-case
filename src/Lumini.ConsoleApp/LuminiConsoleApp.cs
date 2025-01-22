@@ -1,6 +1,6 @@
 ﻿namespace Lumini.ConsoleApp;
 
-class Program
+class LuminiConsoleApp
 {
     static void Main(string[] args)
     {
@@ -12,5 +12,8 @@ class Program
             "==================================="
         );
         Console.ResetColor();
+        
+        Helpers.SelectionHelper.GetOption();
+        
     }
 }
