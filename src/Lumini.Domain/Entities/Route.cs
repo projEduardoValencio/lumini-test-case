@@ -4,7 +4,14 @@ public class Route
 {
     public String Origin { get; set; } = String.Empty;
     public String Destination { get; set; } = String.Empty;
-    public decimal Value { get; set; }
+
+    private decimal _value;
+
+    public decimal Value
+    {
+        get => _value; 
+        set => _value = Math.Round(value, 2);
+    }
 
     public override bool Equals(object? obj)
     {

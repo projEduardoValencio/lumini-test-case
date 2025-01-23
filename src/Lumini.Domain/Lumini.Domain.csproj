@@ -10,4 +10,8 @@
       <Compile Remove="Entities\EntityBase.cs" />
     </ItemGroup>
 
+    <ItemGroup>
+      <ProjectReference Include="..\Shared\Lumini.Communication\Lumini.Communication.csproj" />
+    </ItemGroup>
+
 </Project>

@@ -7,6 +7,7 @@
     </PropertyGroup>
 
     <ItemGroup>
+      <ProjectReference Include="..\Lumini.Infrastructure\Lumini.Infrastructure.csproj" />
       <ProjectReference Include="..\Shared\Lumini.Communication\Lumini.Communication.csproj" />
       <ProjectReference Include="..\Shared\Lumini.Exceptions\Lumini.Exceptions.csproj" />
     </ItemGroup>

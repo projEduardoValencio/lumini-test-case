@@ -6,4 +6,15 @@
         <Nullable>enable</Nullable>
     </PropertyGroup>
 
+    <ItemGroup>
+      <PackageReference Include="Microsoft.EntityFrameworkCore" Version="8.0.12" />
+      <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="8.0.12" />
+      <PackageReference Include="System.Data.SQLite.EF6" Version="1.0.119" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\Lumini.Domain\Lumini.Domain.csproj" />
+      <ProjectReference Include="..\Shared\Lumini.Exceptions\Lumini.Exceptions.csproj" />
+    </ItemGroup>
+
 </Project>

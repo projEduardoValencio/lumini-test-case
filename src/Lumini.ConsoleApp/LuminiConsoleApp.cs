@@ -28,4 +28,9 @@ class LuminiConsoleApp
             Helpers.ActionHelper.ExecuteAction(option);
         }
     }
+    
+    private static void ConfigureServices()
+    {
+        
+    }
 }
