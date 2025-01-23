@@ -6,4 +6,9 @@
         <Nullable>enable</Nullable>
     </PropertyGroup>
 
+    <ItemGroup>
+      <ProjectReference Include="..\Shared\Lumini.Communication\Lumini.Communication.csproj" />
+      <ProjectReference Include="..\Shared\Lumini.Exceptions\Lumini.Exceptions.csproj" />
+    </ItemGroup>
+
 </Project>
