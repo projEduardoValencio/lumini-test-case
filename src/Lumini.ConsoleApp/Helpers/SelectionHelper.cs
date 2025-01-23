@@ -3,9 +3,9 @@ using Lumini.Domain.Enums;
 
 namespace Lumini.ConsoleApp.Helpers;
 
-public class SelectionHelper
+public static class SelectionHelper
 {
-    public static int GetOption()
+    public static ConsoleOptions GetOption()
     {
         
         Console.WriteLine("\nSelecione uma das opções abaixo: ");
@@ -22,7 +22,7 @@ public class SelectionHelper
             int selectedOption = Convert.ToInt32(Console.ReadLine());
             if (options.Contains((ConsoleOptions)selectedOption))
             {
-                return selectedOption;
+                return (ConsoleOptions) selectedOption;
             }
 
             throw new ArgumentException("Opção inválida.");

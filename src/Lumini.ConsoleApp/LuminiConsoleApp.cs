@@ -1,4 +1,6 @@
-﻿namespace Lumini.ConsoleApp;
+﻿using Lumini.Domain.Enums;
+
+namespace Lumini.ConsoleApp;
 
 class LuminiConsoleApp
 {
@@ -12,8 +14,18 @@ class LuminiConsoleApp
             "==================================="
         );
         Console.ResetColor();
-        
-        Helpers.SelectionHelper.GetOption();
-        
+
+        while (true)
+        {
+            ConsoleOptions option = Helpers.SelectionHelper.GetOption();
+
+            if (option == ConsoleOptions.Exit)
+            {
+                Console.WriteLine("Saindo...");
+                break;
+            }
+            
+            Helpers.ActionHelper.ExecuteAction(option);
+        }
     }
 }
