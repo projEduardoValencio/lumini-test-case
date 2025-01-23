@@ -12,6 +12,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lumini.UnitTests", "tests\L
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lumini.Exceptions", "src\Shared\Lumini.Exceptions\Lumini.Exceptions.csproj", "{E4F0965D-E181-4B94-8DE2-6F567487EC6F}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lumini.Communication", "src\Shared\Lumini.Communication\Lumini.Communication.csproj", "{A1D9B696-181D-4A4F-8C7B-1341520BCD91}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -42,5 +44,9 @@ Global
 		{E4F0965D-E181-4B94-8DE2-6F567487EC6F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E4F0965D-E181-4B94-8DE2-6F567487EC6F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E4F0965D-E181-4B94-8DE2-6F567487EC6F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A1D9B696-181D-4A4F-8C7B-1341520BCD91}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A1D9B696-181D-4A4F-8C7B-1341520BCD91}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A1D9B696-181D-4A4F-8C7B-1341520BCD91}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A1D9B696-181D-4A4F-8C7B-1341520BCD91}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
