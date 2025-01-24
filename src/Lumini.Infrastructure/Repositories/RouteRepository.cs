@@ -1,4 +1,5 @@
-﻿using Lumini.Communication.Responses.Route;
+﻿using System.Diagnostics;
+using Lumini.Communication.Responses.Route;
 using Lumini.Domain.Entities;
 using Lumini.Domain.Interfaces.Repositories;
 using Lumini.Exceptions.Exceptions.Route;
@@ -20,7 +21,20 @@ public class RouteRepository : IRouteRepository
     
     public async Task AddRoute(Route newRoute)
     {
-        Route? existentRoute = await this.GetRoute(newRoute.Origin, newRoute.Destination);
+        Route? existentRoute;
+        try
+        {
+            existentRoute = await this.GetRoute(newRoute.Origin, newRoute.Destination);
+        }
+        catch (RouteNotFoundException)
+        {
+            existentRoute = null;
+        }
+        catch (Exception e)
+        {
+            throw new UnreachableException("Error checking if route exists: " + e.Message);
+        }
+        
         if (existentRoute is not null)
         {
             throw new RouteAlreadyExistsException($"Route with {newRoute.Origin}-{newRoute.Destination} already exists");
@@ -55,7 +69,7 @@ public class RouteRepository : IRouteRepository
 
     public async Task<Route> GetRoute(string origin, string destination)
     {
-        Route? route = await _dbSet.FindAsync(new {origin , destination});
+        Route? route = await _dbSet.FindAsync(new object[] {origin , destination});
         if (route is null)
         {
             throw new RouteNotFoundException($"Route with {origin}-{destination} not found");

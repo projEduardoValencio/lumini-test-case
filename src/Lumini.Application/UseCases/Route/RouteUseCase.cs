@@ -48,7 +48,7 @@ public class RouteUseCase : IRouteUseCase
         }
         catch (Exception e)
         {
-            throw new UnreachableException("Error calculating low cost travel path", e);
+            throw new UnreachableException("Error calculating low cost travel path " + e.Message);
         }
     }
 
@@ -69,7 +69,7 @@ public class RouteUseCase : IRouteUseCase
             };
         } catch (Exception e)
         {
-            throw new UnreachableException("Error creating route", e);
+            throw new UnreachableException("Error listing routes " + e.Message);
         }
     }
 
@@ -89,7 +89,7 @@ public class RouteUseCase : IRouteUseCase
             throw;
         } catch (Exception e)
         {
-            throw new UnreachableException("Error creating route", e);
+            throw new UnreachableException("Error creating route " + e.Message);
         }
     }
 
@@ -108,7 +108,7 @@ public class RouteUseCase : IRouteUseCase
             throw;
         } catch (Exception e)
         {
-            throw new UnreachableException("Error updating route", e);
+            throw new UnreachableException("Error updating route " + e.Message);
         }
     }
 

@@ -1,4 +1,5 @@
 ﻿using Lumini.Domain.Entities;
+using Lumini.Infrastructure.DataAccess.EntityConfiguration;
 using Microsoft.EntityFrameworkCore;
 
 namespace Lumini.Infrastructure.DataAccess;
@@ -14,6 +15,8 @@ public class LuminiDbContext : DbContext
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
+
+        modelBuilder.ApplyConfiguration(new RouteConfiguration());
 
         modelBuilder.Entity<Route>().HasData(
             new Route { Origin = "GRU", Destination = "BRC", Value = 10 }, 

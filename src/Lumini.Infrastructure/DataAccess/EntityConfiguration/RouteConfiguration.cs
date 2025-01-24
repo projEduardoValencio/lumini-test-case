@@ -8,10 +8,11 @@ public class RouteConfiguration : IEntityTypeConfiguration<Route>
 {
     public void Configure(EntityTypeBuilder<Route> builder)
     {
+        builder.ToTable("Routes");
         builder.HasKey(r => new { r.Origin, r.Destination });
         builder.Property(r => r.Origin)
-            .IsRequired() // Campo obrigatório
-            .HasMaxLength(4); // Tamanho máximo
+            .IsRequired()
+            .HasMaxLength(4);
 
         builder.Property(r => r.Destination)
             .IsRequired()

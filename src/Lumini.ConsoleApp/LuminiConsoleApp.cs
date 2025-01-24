@@ -1,11 +1,9 @@
 ﻿using Lumini.Application.Interfaces.UseCases.Route;
 using Lumini.Application.UseCases.Route;
 using Lumini.Domain.Enums;
-using Lumini.Domain.Interfaces.Repositories;
 using Lumini.Infrastructure.DataAccess;
-using Lumini.Infrastructure.Factories;
 using Lumini.Infrastructure.Repositories;
-using Microsoft.Extensions.DependencyInjection;
+using Microsoft.EntityFrameworkCore;
 
 namespace Lumini.ConsoleApp;
 
@@ -13,17 +11,23 @@ class LuminiConsoleApp
 {
     static async Task Main(string[] args)
     {
-        var serviceProvider = ConfigureServices();
-
-        var consoleApp = serviceProvider.GetService<LuminiConsoleApp>();
-        await consoleApp!.Run();
+        var consoleApp = new LuminiConsoleApp();
+        await consoleApp.Run();
     }
 
     private readonly IRouteUseCase _routeUseCase;
     
-    public LuminiConsoleApp(IRouteUseCase routeUseCase)
+    public LuminiConsoleApp()
     {
-        _routeUseCase = routeUseCase;
+        string connectionString = "Data Source=lumini.db";
+        var optionsBuilder = new DbContextOptionsBuilder<LuminiDbContext>();
+        optionsBuilder.UseSqlite(connectionString);
+
+        var dbContext = new LuminiDbContext(optionsBuilder.Options);
+        dbContext.Database.Migrate();
+        
+        var routeRepository = new RouteRepository(dbContext);
+        _routeUseCase = new RouteUseCase(routeRepository);
     }
     
     private async Task Run()
@@ -49,19 +53,5 @@ class LuminiConsoleApp
             
             await Helpers.ActionHelper.ExecuteAction(option, _routeUseCase);
         }
-    }
-
-    private static ServiceProvider ConfigureServices()
-    {
-        var services = new ServiceCollection();
-        
-        string connectionString = "Data Source=database.db";
-
-        services.AddSingleton<LuminiDbContext>(_ => new DbContextFactory(connectionString).CreateSqliteDbContext());
-        services.AddSingleton<IRouteRepository, RouteRepository>();
-        services.AddSingleton<IRouteUseCase, RouteUseCase>();
-        services.AddSingleton<LuminiConsoleApp>();
-
-        return services.BuildServiceProvider();
     }
 }

@@ -1,24 +1,17 @@
 ﻿using Lumini.Infrastructure.DataAccess;
 using Lumini.Infrastructure.Interfaces;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Design;
 
 namespace Lumini.Infrastructure.Factories;
 
-public class DbContextFactory : IDbContextFactory
+public class LuminiDesignTimeDbContextFactory : IDesignTimeDbContextFactory<LuminiDbContext>
 {
-    private readonly string _connectionString = String.Empty;
-    
-    public DbContextFactory(string connectionString)
+    public LuminiDbContext CreateDbContext(string[] args)
     {
-        _connectionString = connectionString;
-    }
-    
-    public LuminiDbContext CreateSqliteDbContext()
-    {
-        var options = new DbContextOptionsBuilder<LuminiDbContext>()
-            .UseSqlite(_connectionString)
-            .Options;
-        
-        return new LuminiDbContext(options);
+        var optionsBuilder = new DbContextOptionsBuilder<LuminiDbContext>()
+            .UseSqlite("Data Source=lumini.db"); // Configuração independente
+
+        return new LuminiDbContext(optionsBuilder.Options);
     }
 }

@@ -35,10 +35,21 @@ public static class ActionHelper
     private static void AddRoute(IRouteUseCase routeUseCase)
     {
         ConsoleUtils.WriteOperationTitle("\nAdicionar rota...");
-        
-        string origin = ConsoleUtils.ReadNonNullInput("Origem: ");
-        
-        string destination = ConsoleUtils.ReadNonNullInput("Destino: ");
+
+        string origin;
+        string destination;
+        while (true)
+        {
+            origin = ConsoleUtils.ReadNonNullInput("Origem: ");
+            destination = ConsoleUtils.ReadNonNullInput("Destino: ");
+
+            if (origin != destination)
+            {
+                break;
+            };
+            
+            ConsoleUtils.WriteError("Origem e destino não podem ser iguais.");
+        }
 
         decimal value = ConsoleUtils.ReadDecimalValue("Custo: R$ ");
 
@@ -59,10 +70,7 @@ public static class ActionHelper
             Console.WriteLine("A Rota informada já existe.");
             bool updateValue = ConsoleUtils.ReadYesNoInput("Deseje atualizar o valor da rota existente? (S/N): ");
 
-            if (!updateValue) 
-            {
-                return;
-            }
+            if (!updateValue) return;
             
             decimal newValue = ConsoleUtils.ReadDecimalValue("Novo valor de custo para a rota: R$ ");
 
