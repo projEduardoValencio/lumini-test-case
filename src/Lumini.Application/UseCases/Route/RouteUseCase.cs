@@ -1,33 +1,128 @@
-﻿using Lumini.Application.Interfaces.UseCases.Route;
+﻿using System.Diagnostics;
+using Lumini.Application.Interfaces.UseCases.Route;
+using Lumini.Application.Services.Route;
 using Lumini.Communication.Requests.Route;
 using Lumini.Communication.Responses.Route;
+using Lumini.Domain.Interfaces.Repositories;
+using Lumini.Exceptions.Exceptions.Route;
 
 namespace Lumini.Application.UseCases.Route;
 
 public class RouteUseCase : IRouteUseCase
 {
-    public Task<ResponseLowCostTravel> LowCostTravelPath(RequestLowCostTravel request)
+    private readonly IRouteRepository _routeRepository;
+    
+    public RouteUseCase(IRouteRepository routeRepository)
     {
-        throw new NotImplementedException();
+        _routeRepository = routeRepository;
+    }
+    
+    public async Task<ResponseLowCostTravel> LowCostTravelPath(RequestLowCostTravel request)
+    {
+        try
+        {
+            List<Domain.Entities.Route> allRoutes = await _routeRepository.GetAll();
+
+            Dictionary<List<Domain.Entities.Route>, decimal> possiblePaths = RouteCalculationService.PossiblePaths(
+                allRoutes,
+                request.Origin,
+                request.Destination
+            );
+
+            var cheapestPath = possiblePaths
+                .MinBy(p => p.Value);
+
+            var cheapestPathStringList = cheapestPath
+                .Key
+                .Select(r => r.Origin)
+                .ToList();
+            cheapestPathStringList.Add(request.Destination);
+
+            var cheapestPathValue = cheapestPath.Value;
+
+            return new ResponseLowCostTravel
+            {
+                Path = cheapestPathStringList,
+                TotalValue = cheapestPathValue
+            };
+        }
+        catch (Exception e)
+        {
+            throw new UnreachableException("Error calculating low cost travel path", e);
+        }
     }
 
-    public Task<ResponseRouteList> ListRoutes()
+    public async Task<ResponseRouteList> ListRoutes()
     {
-        throw new NotImplementedException();
+        try
+        {
+            List<Domain.Entities.Route> routes = await _routeRepository.GetAll();
+            
+            return new ResponseRouteList
+            {
+                Routes = routes.Select(route => new ResponseRouteCreated()
+                {
+                    Destination = route.Destination,
+                    Origin = route.Origin,
+                    Value = route.Value
+                }).ToList()
+            };
+        } catch (Exception e)
+        {
+            throw new UnreachableException("Error creating route", e);
+        }
     }
 
-    public Task<ResponseRouteCreated> CreateRoute(RequestsRegisterRoute request)
+    public async Task CreateRoute(RequestsRegisterRoute request)
     {
-        throw new NotImplementedException();
+        try
+        {
+            await _routeRepository.AddRoute(new Domain.Entities.Route
+            {
+                Destination = request.Destination,
+                Origin = request.Origin,
+                Value = request.Value
+            });
+        }
+        catch (RouteAlreadyExistsException e)
+        {
+            throw;
+        } catch (Exception e)
+        {
+            throw new UnreachableException("Error creating route", e);
+        }
     }
 
-    public Task<ResponseRouteCreated> UpdateRouteValue(RequestUpdateRouteValue request)
+    public async Task UpdateRouteValue(RequestUpdateRouteValue request)
     {
-        throw new NotImplementedException();
+        try
+        {
+            await _routeRepository.UpdateRoute(new Domain.Entities.Route
+            {
+                Origin = request.Origin,
+                Destination = request.Destination,
+                Value = request.NewValue
+            });
+        }catch (RouteNotFoundException e)
+        {
+            throw;
+        } catch (Exception e)
+        {
+            throw new UnreachableException("Error updating route", e);
+        }
     }
 
-    public Task DeleteRoute(RequestDeleteRoute request)
+    public async Task DeleteRoute(RequestDeleteRoute request)
     {
-        throw new NotImplementedException();
+        try
+        {
+            await _routeRepository.DeleteRoute(request.Origin, request.Destination);
+        } catch (RouteNotFoundException e)
+        {
+            throw;
+        } catch (Exception e)
+        {
+            throw new UnreachableException("Error deleting route", e);
+        }
     }
 }

@@ -20,6 +20,12 @@ public class RouteRepository : IRouteRepository
     
     public async Task AddRoute(Route newRoute)
     {
+        Route? existentRoute = await this.GetRoute(newRoute.Origin, newRoute.Destination);
+        if (existentRoute is not null)
+        {
+            throw new RouteAlreadyExistsException($"Route with {newRoute.Origin}-{newRoute.Destination} already exists");
+        }
+
         await _dbSet.AddAsync(newRoute);
         await _dbContext.SaveChangesAsync();
     }
@@ -40,6 +46,11 @@ public class RouteRepository : IRouteRepository
 
         _dbSet.Update(route);
         await _dbContext.SaveChangesAsync();
+    }
+
+    public async Task<List<Route>> GetAll()
+    {
+        return await _dbSet.ToListAsync();
     }
 
     public async Task<Route> GetRoute(string origin, string destination)

@@ -7,7 +7,7 @@ public interface IRouteUseCase
 {
     public Task<ResponseLowCostTravel> LowCostTravelPath(RequestLowCostTravel request);
     public Task<ResponseRouteList> ListRoutes();
-    public Task<ResponseRouteCreated> CreateRoute(RequestsRegisterRoute request);
-    public Task<ResponseRouteCreated> UpdateRouteValue(RequestUpdateRouteValue request);
+    public Task CreateRoute(RequestsRegisterRoute request);
+    public Task UpdateRouteValue(RequestUpdateRouteValue request);
     public Task DeleteRoute(RequestDeleteRoute request);
 }
