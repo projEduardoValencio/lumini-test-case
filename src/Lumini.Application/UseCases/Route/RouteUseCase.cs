@@ -93,9 +93,9 @@ public class RouteUseCase : IRouteUseCase
                 Value = request.Value
             });
         }
-        catch (RouteAlreadyExistsException e)
+        catch (RouteAlreadyExistsException)
         {
-            throw;
+            throw new RouteAlreadyExistsException("Rota já cadastrada.");
         } catch (Exception e)
         {
             throw new UnreachableException("Error creating route " + e.Message);
@@ -112,7 +112,7 @@ public class RouteUseCase : IRouteUseCase
                 Destination = request.Destination,
                 Value = request.NewValue
             });
-        }catch (RouteNotFoundException e)
+        }catch (RouteNotFoundException)
         {
             throw;
         } catch (Exception e)
@@ -126,7 +126,7 @@ public class RouteUseCase : IRouteUseCase
         try
         {
             await _routeRepository.DeleteRoute(request.Origin, request.Destination);
-        } catch (RouteNotFoundException e)
+        } catch (RouteNotFoundException)
         {
             throw;
         } catch (Exception e)

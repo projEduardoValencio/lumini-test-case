@@ -15,10 +15,10 @@ public static class ActionHelper
         switch (option)
         {
             case ConsoleOptions.AddRoute:
-                AddRoute(routeUseCase);
+                await AddRoute(routeUseCase);
                 break;
             case ConsoleOptions.RemoveRoute:
-                RemoveRoute(routeUseCase);
+                await RemoveRoute(routeUseCase);
                 break;
             case ConsoleOptions.ListRoutes:
                 await ListRoutes(routeUseCase);
@@ -32,7 +32,7 @@ public static class ActionHelper
         }
     }
     
-    private static void AddRoute(IRouteUseCase routeUseCase)
+    private static async Task AddRoute(IRouteUseCase routeUseCase)
     {
         ConsoleUtils.WriteOperationTitle("\nAdicionar rota...");
 
@@ -62,7 +62,8 @@ public static class ActionHelper
 
         try
         {
-            routeUseCase.CreateRoute(request);
+            await routeUseCase.CreateRoute(request);
+            
             ConsoleUtils.WriteSuccess("Rota criada com sucesso.");
         }
         catch (RouteAlreadyExistsException)
@@ -96,7 +97,7 @@ public static class ActionHelper
         }
     }
     
-    private static void RemoveRoute(IRouteUseCase routeUseCase)
+    private static async Task RemoveRoute(IRouteUseCase routeUseCase)
     {
         ConsoleUtils.WriteOperationTitle("\nRemover rota...");
         

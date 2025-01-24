@@ -22,13 +22,8 @@ public class RouteRepository : IRouteRepository
     public async Task AddRoute(Route newRoute)
     {
         Route? existentRoute;
-        try
-        {
-            existentRoute = await this.GetRoute(newRoute.Origin, newRoute.Destination);
-        }
-        catch (RouteNotFoundException)
-        {
-            existentRoute = null;
+        try{
+            existentRoute = await _dbSet.FindAsync(new object[] {newRoute.Origin , newRoute.Destination});
         }
         catch (Exception e)
         {

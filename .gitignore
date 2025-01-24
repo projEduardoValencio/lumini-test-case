@@ -1,4 +1,6 @@
 bin/
+!/src/Lumini.ConsoleApp/bin
+!/src/Lumini.ConsoleApp/bin/Release
 obj/
 /packages/
 riderModule.iml
