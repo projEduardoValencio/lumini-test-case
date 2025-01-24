@@ -4,14 +4,15 @@ public class RouteCalculationService
 {
     static public Dictionary<List<Domain.Entities.Route>, decimal> PossiblePaths(
         List<Domain.Entities.Route> allRoutes,
-        string origin, 
+        string origin,
         string destination )
     {
-        Dictionary<List<Domain.Entities.Route>, decimal> possiblePaths = new Dictionary<List<Domain.Entities.Route>, decimal>();
-        
+        Dictionary<(List<Domain.Entities.Route> Path, HashSet<string> History), decimal> possiblePaths = new Dictionary<(List<Domain.Entities.Route>, HashSet<string>), decimal>();
+
         foreach (var route in allRoutes.Where(r => r.Origin == origin))
         {
-            possiblePaths.Add(new List<Domain.Entities.Route> { route }, route.Value);
+            var history = new HashSet<string> { route.Origin, route.Destination };
+            possiblePaths.Add((new List<Domain.Entities.Route> { route }, history), route.Value);
         }
 
         bool updated;
@@ -20,7 +21,7 @@ public class RouteCalculationService
             updated = false;
             foreach (var path in possiblePaths.Keys.ToList())
             {
-                var lastRoute = path[^1];
+                var lastRoute = path.Path[^1];
 
                 if (lastRoute.Destination == destination)
                 {
@@ -37,10 +38,16 @@ public class RouteCalculationService
 
                 foreach (var nextRoute in nextRoutes)
                 {
-                    var newPath = new List<Domain.Entities.Route>(path) { nextRoute };
+                    if (path.History.Contains(nextRoute.Destination))
+                    {
+                        continue;
+                    }
+
+                    var newPath = new List<Domain.Entities.Route>(path.Path) { nextRoute };
+                    var newHistory = new HashSet<string>(path.History) { nextRoute.Destination };
                     var newCost = possiblePaths[path] + nextRoute.Value;
 
-                    possiblePaths.Add(newPath, newCost);
+                    possiblePaths.Add((newPath, newHistory), newCost);
                     updated = true;
                 }
 
@@ -48,6 +55,6 @@ public class RouteCalculationService
             }
         } while (updated);
 
-        return possiblePaths;
+        return possiblePaths.ToDictionary(p => p.Key.Path, p => p.Value);
     }
 }
