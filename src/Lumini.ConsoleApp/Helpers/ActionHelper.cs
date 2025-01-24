@@ -162,12 +162,12 @@ public static class ActionHelper
         try
         {
             ResponseLowCostTravel response = await routeUseCase.LowCostTravelPath(request);
-            
+
             if (response.Path.Count is 0)
             {
                 ConsoleUtils.WriteError("Não foi possível encontrar uma rota para o destino informado.");
             }
-            
+
             StringBuilder stringBuilderPath = new StringBuilder();
 
             foreach (var path in response.Path)
@@ -175,8 +175,13 @@ public static class ActionHelper
                 stringBuilderPath.Append(path);
                 stringBuilderPath.Append(" -> ");
             }
-            
-            ConsoleUtils.WriteSuccess($"Rota mais econômica: {stringBuilderPath.ToString().TrimEnd(' ', '-')} | Custo total: R$ {Math.Round(response.TotalValue, 2)}");
+
+            ConsoleUtils.WriteSuccess(
+                $"Rota mais econômica: {stringBuilderPath.ToString().TrimEnd(' ', '-')} | Custo total: R$ {Math.Round(response.TotalValue, 2)}");
+        }
+        catch (NoPathAvailableException)
+        {
+            ConsoleUtils.WriteError("Não foi possível encontrar uma rota para o destino informado.");
         }
         catch (Exception e)
         {

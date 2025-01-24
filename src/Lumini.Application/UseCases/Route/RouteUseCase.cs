@@ -29,6 +29,11 @@ public class RouteUseCase : IRouteUseCase
                 request.Destination
             );
 
+            if (possiblePaths.Count == 0)
+            {
+                throw new NoPathAvailableException("Nenhuma rota disponível");
+            }
+
             var cheapestPath = possiblePaths
                 .MinBy(p => p.Value);
 
@@ -45,6 +50,10 @@ public class RouteUseCase : IRouteUseCase
                 Path = cheapestPathStringList,
                 TotalValue = cheapestPathValue
             };
+        }
+        catch (NoPathAvailableException)
+        {
+            throw;
         }
         catch (Exception e)
         {
