@@ -20,7 +20,7 @@ Rota de Viagem <br/> Teste Técnico
 * [Possiveis Melhorias (Não são pré requsito)](#possiveis-melhorias-não-são-pré-requsito)
 * [Como Rodar a Aplicação](#como-rodar-a-aplicação)
 * [Preview](#preview)
-
+* [EXTRA - Video de Apresentação](#extra---video-de-apresentação)
 
 ---
 
@@ -78,5 +78,14 @@ dotnet ./src/Lumini.ConsoleApp/bin/Release/net8.0/Lumini.ConsoleApp.dll
     <img src="./assets/addRoute.png" alt="Adicionando Uma Nova Rota"/>
     <img src="./assets/lowCostPath.png" alt="Calculando a Melhor Viagem"/>
 </div>
+
+---
+
+## EXTRA - Video de Apresentação
+O seguinte video tem cerca de **2 min** e foi gravado após a entrega do projeto para explicar um pouco melhor o projeto. 
+
+<a href="https://www.youtube.com/watch?v=wSv0uusTI0I" target="_blank" style="width: 100%, height: auto">
+  <img src="https://img.youtube.com/vi/wSv0uusTI0I/0.jpg" alt="Apresentação do Projeto" style="max-width: 100%; height: auto;">
+</a>
 
 ---
