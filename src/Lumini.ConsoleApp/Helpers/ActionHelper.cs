@@ -1,13 +1,16 @@
-﻿using Lumini.Application.Interfaces.UseCases.Route;
+﻿using System.Text;
+using Lumini.Application.Interfaces.UseCases.Route;
+using Lumini.Communication.Requests.Route;
+using Lumini.Communication.Responses.Route;
+using Lumini.ConsoleApp.Utils;
 using Lumini.Domain.Enums;
+using Lumini.Exceptions.Exceptions.Route;
 
 namespace Lumini.ConsoleApp.Helpers;
 
 public static class ActionHelper
 {
-    public static IRouteUseCase RouteUseCase { get; set; }
-    
-    public static void ExecuteAction(ConsoleOptions option, IRouteUseCase routeUseCase)
+    public static async Task ExecuteAction(ConsoleOptions option, IRouteUseCase routeUseCase)
     {
         switch (option)
         {
@@ -18,10 +21,10 @@ public static class ActionHelper
                 RemoveRoute(routeUseCase);
                 break;
             case ConsoleOptions.ListRoutes:
-                ListRoutes(routeUseCase);
+                await ListRoutes(routeUseCase);
                 break;
             case ConsoleOptions.CalculateTravelPath:
-                CalculateTravelPath(routeUseCase);
+                await CalculateTravelPath(routeUseCase);
                 break;
             default:
                 Console.WriteLine("Opção inválida.");
@@ -31,61 +34,146 @@ public static class ActionHelper
     
     private static void AddRoute(IRouteUseCase routeUseCase)
     {
-        Console.WriteLine("\nAdicionando rota...");
+        ConsoleUtils.WriteOperationTitle("\nAdicionar rota...");
         
-        Console.Write("Origem: ");
-        string origin = Console.ReadLine();
+        string origin = ConsoleUtils.ReadNonNullInput("Origem: ");
         
-        Console.Write("Destino: ");
-        string destination = Console.ReadLine();
-        
-        Console.Write("Valor: R$ ");
-        decimal value = Convert.ToDecimal(Console.ReadLine());
-        
-        // Verify if route already exists
-        // Add route to database
+        string destination = ConsoleUtils.ReadNonNullInput("Destino: ");
+
+        decimal value = ConsoleUtils.ReadDecimalValue("Custo: R$ ");
+
+        RequestsRegisterRoute request = new RequestsRegisterRoute
+        {
+            Origin = origin,
+            Destination = destination,
+            Value = value
+        };
+
+        try
+        {
+            routeUseCase.CreateRoute(request);
+            ConsoleUtils.WriteSuccess("Rota criada com sucesso.");
+        }
+        catch (RouteAlreadyExistsException)
+        {
+            Console.WriteLine("A Rota informada já existe.");
+            bool updateValue = ConsoleUtils.ReadYesNoInput("Deseje atualizar o valor da rota existente? (S/N): ");
+
+            if (!updateValue) 
+            {
+                return;
+            }
+            
+            decimal newValue = ConsoleUtils.ReadDecimalValue("Novo valor de custo para a rota: R$ ");
+
+            RequestUpdateRouteValue requestUpdateRouteValue = new RequestUpdateRouteValue
+            {
+                Origin = origin,
+                Destination = destination,
+                NewValue = newValue
+            };
+
+            try
+            {
+                routeUseCase.UpdateRouteValue(requestUpdateRouteValue);
+                ConsoleUtils.WriteSuccess("Valor da rota atualizado com sucesso.");
+            } catch (Exception e)
+            {
+                ConsoleUtils.WriteError(e.Message);
+            }
+        }
+        catch (Exception e)
+        {
+            ConsoleUtils.WriteError(e.Message);
+        }
     }
     
     private static void RemoveRoute(IRouteUseCase routeUseCase)
     {
-        Console.WriteLine("\nRemovendo rota...");
+        ConsoleUtils.WriteOperationTitle("\nRemover rota...");
         
-        Console.Write("Origem: ");
-        string origin = Console.ReadLine();
+        string origin = ConsoleUtils.ReadNonNullInput("Origem: ");
         
-        Console.Write("Destino: ");
-        string destination = Console.ReadLine();
-        
-        // Remove route from database
-    }
-    
-    private static void ListRoutes(IRouteUseCase routeUseCase)
-    {
-        Console.WriteLine("\nListando rotas...");
-        
-        // List all routes from database
-    }
+        string destination = ConsoleUtils.ReadNonNullInput("Destino: ");
 
-    private static void updateRouteValue(string origin, string destination, IRouteUseCase routeUseCase)
-    {
-        Console.WriteLine("\nAtualizando valor da rota...");
-        
-        Console.Write($"Novo valor para rota {origin} - {destination}: R$ ");
-        decimal value = Convert.ToDecimal(Console.ReadLine());
-        
-        // Update route value in database
+        try
+        {
+            RequestDeleteRoute request = new RequestDeleteRoute
+            {
+                Origin = origin,
+                Destination = destination
+            };
+
+            routeUseCase.DeleteRoute(request);
+            
+            ConsoleUtils.WriteSuccess("Rota removida com sucesso.");
+        }
+        catch (RouteNotFoundException)
+        {
+            Console.WriteLine("A Rota informada não existe.");
+        }
+        catch (Exception e)
+        {
+            ConsoleUtils.WriteError(e.Message);
+        }
     }
     
-    private static void CalculateTravelPath(IRouteUseCase routeUseCase)
+    private static async Task ListRoutes(IRouteUseCase routeUseCase)
     {
-        Console.WriteLine("\nCalculando rota...");
+        ConsoleUtils.WriteOperationTitle("\nListando registro de rotas...");
+
+        try
+        {
+            ResponseRouteList routes = await routeUseCase.ListRoutes();
+            
+            foreach (var route in routes.Routes)
+            {
+                Console.WriteLine($"{route.Origin}-{route.Destination} R$ {Math.Round(route.Value, 2)}");
+            }
+        }
+        catch (Exception e)
+        {
+            ConsoleUtils.WriteError(e.Message);
+        }
+    }
+    
+    private static async Task CalculateTravelPath(IRouteUseCase routeUseCase)
+    {
+        ConsoleUtils.WriteOperationTitle("\nCalcular rota com menor custo...");
         
-        Console.Write("Origem: ");
-        string origin = Console.ReadLine();
+        string origin = ConsoleUtils.ReadNonNullInput("Origem: ");
         
-        Console.Write("Destino: ");
-        string destination = Console.ReadLine();
-        
-        // Calculate travel path
+        string destination = ConsoleUtils.ReadNonNullInput("Destino: ");
+
+        RequestLowCostTravel request = new RequestLowCostTravel
+        {
+            Origin = origin,
+            Destination = destination
+        };
+
+        try
+        {
+            ResponseLowCostTravel response = await routeUseCase.LowCostTravelPath(request);
+            
+            if (response.Path.Count is 0)
+            {
+                ConsoleUtils.WriteError("Não foi possível encontrar uma rota para o destino informado.");
+            }
+            
+            StringBuilder stringBuilderPath = new StringBuilder();
+
+            foreach (var path in response.Path)
+            {
+                stringBuilderPath.Append(path);
+                stringBuilderPath.Append(" -> ");
+            }
+            
+            ConsoleUtils.WriteSuccess($"Rota mais econômica: {stringBuilderPath.ToString().TrimEnd(' ', '-')} | Custo total: R$ {Math.Round(response.TotalValue, 2)}");
+        }
+        catch (Exception e)
+        {
+            ConsoleUtils.WriteError(e.Message);
+            throw;
+        }
     }
 }

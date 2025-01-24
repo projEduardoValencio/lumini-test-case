@@ -11,12 +11,12 @@ namespace Lumini.ConsoleApp;
 
 class LuminiConsoleApp
 {
-    static void Main(string[] args)
+    static async Task Main(string[] args)
     {
         var serviceProvider = ConfigureServices();
 
         var consoleApp = serviceProvider.GetService<LuminiConsoleApp>();
-        consoleApp!.Run();
+        await consoleApp!.Run();
     }
 
     private readonly IRouteUseCase _routeUseCase;
@@ -26,7 +26,7 @@ class LuminiConsoleApp
         _routeUseCase = routeUseCase;
     }
     
-    private void Run()
+    private async Task Run()
     {
         Console.BackgroundColor = ConsoleColor.DarkBlue;
         Console.ForegroundColor = ConsoleColor.White;
@@ -47,7 +47,7 @@ class LuminiConsoleApp
                 break;
             }
             
-            Helpers.ActionHelper.ExecuteAction(option, _routeUseCase);
+            await Helpers.ActionHelper.ExecuteAction(option, _routeUseCase);
         }
     }
 
