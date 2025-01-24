@@ -7,4 +7,9 @@
         <Nullable>enable</Nullable>
     </PropertyGroup>
 
+    <ItemGroup>
+      <ProjectReference Include="..\Lumini.Application\Lumini.Application.csproj" />
+      <ProjectReference Include="..\Lumini.Infrastructure\Lumini.Infrastructure.csproj" />
+    </ItemGroup>
+
 </Project>

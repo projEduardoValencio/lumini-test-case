@@ -1,24 +1,27 @@
-﻿using Lumini.Domain.Enums;
+﻿using Lumini.Application.Interfaces.UseCases.Route;
+using Lumini.Domain.Enums;
 
 namespace Lumini.ConsoleApp.Helpers;
 
 public static class ActionHelper
 {
-    public static void ExecuteAction(ConsoleOptions option)
+    public static IRouteUseCase RouteUseCase { get; set; }
+    
+    public static void ExecuteAction(ConsoleOptions option, IRouteUseCase routeUseCase)
     {
         switch (option)
         {
             case ConsoleOptions.AddRoute:
-                AddRoute();
+                AddRoute(routeUseCase);
                 break;
             case ConsoleOptions.RemoveRoute:
-                RemoveRoute();
+                RemoveRoute(routeUseCase);
                 break;
             case ConsoleOptions.ListRoutes:
-                ListRoutes();
+                ListRoutes(routeUseCase);
                 break;
             case ConsoleOptions.CalculateTravelPath:
-                CalculateTravelPath();
+                CalculateTravelPath(routeUseCase);
                 break;
             default:
                 Console.WriteLine("Opção inválida.");
@@ -26,7 +29,7 @@ public static class ActionHelper
         }
     }
     
-    private static void AddRoute()
+    private static void AddRoute(IRouteUseCase routeUseCase)
     {
         Console.WriteLine("\nAdicionando rota...");
         
@@ -43,7 +46,7 @@ public static class ActionHelper
         // Add route to database
     }
     
-    private static void RemoveRoute()
+    private static void RemoveRoute(IRouteUseCase routeUseCase)
     {
         Console.WriteLine("\nRemovendo rota...");
         
@@ -56,14 +59,14 @@ public static class ActionHelper
         // Remove route from database
     }
     
-    private static void ListRoutes()
+    private static void ListRoutes(IRouteUseCase routeUseCase)
     {
         Console.WriteLine("\nListando rotas...");
         
         // List all routes from database
     }
 
-    private static void updateRouteValue(string origin, string destination)
+    private static void updateRouteValue(string origin, string destination, IRouteUseCase routeUseCase)
     {
         Console.WriteLine("\nAtualizando valor da rota...");
         
@@ -73,7 +76,7 @@ public static class ActionHelper
         // Update route value in database
     }
     
-    private static void CalculateTravelPath()
+    private static void CalculateTravelPath(IRouteUseCase routeUseCase)
     {
         Console.WriteLine("\nCalculando rota...");
         
